@@ -1,0 +1,114 @@
+
+
+spring.datasource.url=jdbc:sqlserver://DESKTOP-R53GNLA\\SQLEXPRESS;databaseName=test;encrypt=false;
+spring.datasource.username=sa
+spring.datasource.password=
+
+
+------------------------------------------------------------------
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+@SpringBootApplication
+public class IntelliJDemo1Application implements CommandLineRunner{
+
+	@Autowired
+	private JdbcTemplate jdbct;
+	
+	public static void main(String[] args) {
+		SpringApplication.run(IntelliJDemo1Application.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		
+		String sql ="SELECT * FROM customer";
+		List<Customer> cust = jdbct.query(sql,BeanPropertyRowMapper.newInstance(Customer.class));
+		
+		cust.forEach(System.out::println);
+		
+	}
+
+}
+------------------------------------------------------------------------------------------------------
+
+
+public class Customer {
+	private int id;
+	private String name;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", name=" + name + "]";
+	}
+	
+
+}
+
+
+------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.ust</groupId>
+	<artifactId>IntelliJDemo1</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>IntelliJDemo1</name>
+	<description>Demo project for Spring Boot Rest</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,216 @@
+
+----------SBDJPA---------
+
+#datasource Properties
+
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.url=jdbc:sqlserver://DESKTOP-R53GNLA\\SQLEXPRESS;databaseName=test;encrypt=false;
+spring.datasource.username=sa
+spring.datasource.password=
+
+
+#hibernate
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.ust"})
+public class SpringbootDataJpaDemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringbootDataJpaDemoApplication.class, args);
+	}
+
+}
+-----------------------------------------------------------------------------------
+
+@Entity
+@Table(name = "Product_tab")
+public class Product {
+	@Id
+	@Column
+	private Integer pid;
+	@Column(length = 20)
+	private String pname;
+	@Column
+	private float price;
+
+
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public Product(Integer pid, String pname, float price) {
+		super();
+		this.pid = pid;
+		this.pname = pname;
+		this.price = price;
+	}
+
+
+	public Integer getPid() {
+		return pid;
+	}
+
+
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+
+
+	public String getPname() {
+		return pname;
+	}
+
+
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+
+
+	public float getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+
+
+
+
+}
+----------------------------------------------------------------------------------
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+
+
+@Repository
+public interface ProductRepository extends JpaRepository<Product, Integer>{
+
+}
+
+---------------------------------------------------------------------------------
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ust.dao.ProductRepository;
+import com.ust.model.Product;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service
+public class ProductServiceImpl {
+	
+	@Autowired
+	ProductRepository pdao;//jpa Repository Object
+
+	@Transactional
+	public void saveProduct(Product p) {
+		pdao.save(p);
+	}
+	
+	
+	
+
+}
+
+--------------------------------------------------------------------------------------
+package com.ust.runner;
+
+import com.ust.dao.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.ust.model.Product;
+import com.ust.service.ProductServiceImpl;
+import org.springframework.stereotype.Controller;
+
+@Component
+public class ProductCURDOperations implements CommandLineRunner{
+
+	@Autowired
+	ProductServiceImpl perObj;
+	
+	@Override
+	public void run(String... args) throws Exception {
+		
+		//Create a product obj
+		
+		Product p=new Product();
+		p.setPid(1001);
+		p.setPname("keyboard");
+		p.setPrice(500);
+		
+		//perObj.saveProduct(p);
+		perObj.saveProduct(p);
+		System.out.println("record inserted");
+		
+	}
+
+}
+----------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.3</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.ust</groupId>
+	<artifactId>SpringbootDataJPADemo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>SpringbootDataJPADemo</name>
+	<description>Demo project for Spring Boot Rest</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
